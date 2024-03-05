@@ -63,28 +63,17 @@
 class SysModel_PWMServoDriver {
 public:
     SysModel_PWMServoDriver();
-    // SysModel_PWMServoDriver(const int servoNum,uin   t8_t freq);
     void sleep();
     void setFreq(float freq);
     void begin();
     void setAngle(int servoNum, int angle);
     void wakeup();
-//   uint16_t getPWM(uint8_t num, bool off = false);
-
-//   uint8_t readPrescale(void);
-//   void writeMicroseconds(uint8_t num, uint16_t Microseconds);
-
-//   void setOscillatorFrequency(uint32_t freq);
-//   uint32_t getOscillatorFrequency(void);
-
+// Move these to private and test
     void writeReg(uint8_t addr,uint8_t value);
     uint8_t readReg(uint8_t addr);
 
 private:
     uint8_t _i2caddr;
-//   TwoWire *_i2c;
-//   Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
-
     uint32_t _oscillator_freq;
     uint8_t _freq;
     // void writeReg(uint8_t addr,uint8_t value);
