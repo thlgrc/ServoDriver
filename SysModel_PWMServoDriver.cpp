@@ -12,7 +12,6 @@
 #include <math.h>
 
 
-#define MODE1_AI 0x20 
 SysModel_PWMServoDriver::SysModel_PWMServoDriver()
     : _i2caddr(PCA9685_I2C_ADDRESS) {}
    
@@ -44,37 +43,28 @@ void SysModel_PWMServoDriver::wakeup() {
 }
 
 void SysModel_PWMServoDriver::setFreq(float freq){
-
-    // Range output modulation frequency is dependant on oscillator
-    if (freq < 1)
-    freq = 1;
-    if (freq > 3500)
-    freq = 3500; // Datasheet limit is 3052=50MHz/(4*4096)
-
-    float prescaleval = (( FREQUENCY_OSCILLATOR / (freq * 4096.0)) + 0.5) - 1;
-    if (prescaleval < PCA9685_PRESCALE_MIN){
-    prescaleval = PCA9685_PRESCALE_MIN;
-    }
-    if (prescaleval > PCA9685_PRESCALE_MAX){
-    prescaleval = PCA9685_PRESCALE_MAX;
-    }
-    uint8_t prescale = (uint8_t)prescaleval;
+	
+	// Range output modulation frequency is dependant on oscillator
+	if (freq < 1){
+		freq = 1;
+	}
+	if (freq > 3500)
+		freq = 3500; // Datasheet limit is 3052=50MHz/(4*4096)
+	
+	float prescaleval = (( FREQUENCY_OSCILLATOR / (freq * 4096.0)) + 0.5) - 1;
+	
+	if (prescaleval < PCA9685_PRESCALE_MIN){
+		prescaleval = PCA9685_PRESCALE_MIN;
+	}
+	if (prescaleval > PCA9685_PRESCALE_MAX){
+		prescaleval = PCA9685_PRESCALE_MAX;
+	}
+	uint8_t prescale = (uint8_t)prescaleval;
 	sleep();
-    /*
-    uint8_t oldmode = readReg(PCA9685_MODE1);
-std::cout << "oldmode: 0x" << std::hex << (int)oldmode << std::endl;
-    uint8_t newmode = (oldmode & ~MODE1_RESTART) | MODE1_SLEEP; // sleep
-std::cout << "newmode: 0x" << std::hex << (int)newmode << std::endl;
-    writeReg(PCA9685_MODE1, newmode);                             // go to sleep
-    writeReg(PCA9685_MODE1, oldmode);
-    delay(5);
-    */
-     writeReg(PCA9685_PRESCALE, prescale); // set the prescaler
-wakeup();
-    // This sets the MODE1 register to turn on auto increment.
-//     writeReg(PCA9685_MODE1, oldmode | MODE1_RESTART |MODE1_AI);
-    std::cout << "Prescale Value: 0x" << std::hex << (int)prescale << std::endl;
-    _freq = freq;
+	writeReg(PCA9685_PRESCALE, prescale); // set the prescaler
+	wakeup();	
+	std::cout << "Prescale Value: 0x" << std::hex << (int)prescale << std::endl;
+	_freq = freq;
     
 }
 
@@ -84,9 +74,7 @@ void SysModel_PWMServoDriver::begin(){
     writeReg(PCA9685_ALLLED_ON_H,0);
     writeReg(PCA9685_ALLLED_OFF_L,0);
     writeReg(PCA9685_ALLLED_OFF_H,0);
-    
-    //set frequency to 50
-//    setFreq(50);
+
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
@@ -180,42 +168,73 @@ long SysModel_PWMServoDriver::map(long x, long in_min, long in_max, long out_min
 
 
 int main(){
-    SysModel_PWMServoDriver servo;
-    servo.begin();
-	servo.setFreq(200);
-   SysModel_PWMServoDriver servoB;
-  servoB.begin();
-  servoB.setFreq(200);
-/*
-servo.setAngle(0,45);
+	SysModel_PWMServoDriver servo;
+	servo.begin();
+	char input;
+	int flag = 1;
+	int angle;
+	int freq;
+	int servoOutput;
 
-    servo.readReg(6);
-    delay(500);
-    servo.readReg(7);
-    delay(500);
-    servo.readReg(8);
-   delay(500);
-    servo.readReg(9);
+	while(flag){
+		std::cout << "Enter 'F' if yout want to test the frequency output." << std::endl;
+		std::cout << "Enter 'A' if yout want to test the angle output." << std::endl;
+		std::cout << "Enter 'S' if yout want to stop testing." << std::endl;
+		std::scanf("%c",input);
 
+		switch(input){
+			case 'F':
+				std::cout << "Please enter a frequency from 50 to 330Hz" << std::endl;
+				std::scanf("%d",&freq);
+				if(freq < 50 || freq > 330){
+					std::cout << "The frequency value you entered is beyond the limit." << std::endl;
+					return 0;
+				}else{
+					setFreq(freq);
+				}
 
-*/
+				break;
 
-char input;
-    int angle;
+			case 'A':
+				/*
+				std::cout << "Please enter which servo output pin you want to test" << std::endl;
+				std::scanf("%d",&servoOutput);
+				if(angle < 0 || freq > 180){
+					std::cout << "The angle value you entered is beyond the limit." << std::endl;
+					return 0;
+				}else{
+					setFreq(freq);
+				}
+				std::cout << "Please enter an angle from 0 to 180" << std::endl;
+				std::scanf("%d",&freq);
+				if(angle < 0 || freq > 180){
+					std::cout << "The angle value you entered is beyond the limit." << std::endl;
+					return 0;
+				}else{
+					
+				}
+				*/
+				break;
 
-    while(1){
+			case 'S':
+				flag = 0;
+				break;
+			
 
-            std::cout << "Please enter an angle from 0 to 180" << std::endl;
-            std::scanf("%d",&angle);
-            servoB.setAngle(0,angle);
-		servo.setAngle(8,angle);
-            servo.readReg(6);
-            servo.readReg(7);
-            servo.readReg(8);
-            servo.readReg(9);
-
-
-    }
-
-    return 0;
+		}
+			
+		/*
+		    std::cout << "Please enter an angle from 0 to 180" << std::endl;
+		    std::scanf("%d",&angle);
+		    servoB.setAngle(0,angle);
+			servo.setAngle(8,angle);
+		    servo.readReg(6);
+		    servo.readReg(7);
+		    servo.readReg(8);
+		    servo.readReg(9);
+		*/
+	
+	}
+	
+	return 0;
 }
