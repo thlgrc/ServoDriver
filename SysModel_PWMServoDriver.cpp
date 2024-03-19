@@ -188,7 +188,8 @@ int main(){
 				std::scanf("%d",&freq);
 				if(freq < 50 || freq > 330){
 					std::cout << "The frequency value you entered is beyond the limit." << std::endl;
-					return 0;
+					// return 0;
+					break;
 				}else{
 					servo.setFreq(freq);
 				}
@@ -202,14 +203,15 @@ int main(){
 				
 				if(servoOutput < 0 || servoOutput > 15){
 					std::cout << "The pin number you entered is beyond the limit." << std::endl;
-					return 0;
-					//break?
+					// return 0;
+					break;
 				}
 				std::cout << "Please enter an angle from 0 to 180" << std::endl;
 				std::scanf("%d",&angle);
 				if(angle < 0 || angle > 180){
 					std::cout << "The angle value you entered is beyond the limit." << std::endl;
-					return 0;
+					// return 0;
+					break;
 				}else{
 					servo.setAngle(servoOutput,angle);
 				}
