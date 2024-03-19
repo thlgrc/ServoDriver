@@ -196,24 +196,24 @@ int main(){
 				break;
 
 			case 'A':
-				/*
-				std::cout << "Please enter which servo output pin you want to test" << std::endl;
+				
+				std::cout << "Please enter which servo output pin [0 - 15] you want to test" << std::endl;
 				std::scanf("%d",&servoOutput);
-				if(angle < 0 || freq > 180){
-					std::cout << "The angle value you entered is beyond the limit." << std::endl;
+				
+				if(servoOutput < 0 || servoOutput > 15){
+					std::cout << "The pin number you entered is beyond the limit." << std::endl;
 					return 0;
-				}else{
-					setFreq(freq);
+					//break?
 				}
 				std::cout << "Please enter an angle from 0 to 180" << std::endl;
-				std::scanf("%d",&freq);
-				if(angle < 0 || freq > 180){
+				std::scanf("%d",&angle);
+				if(angle < 0 || angle > 180){
 					std::cout << "The angle value you entered is beyond the limit." << std::endl;
 					return 0;
 				}else{
-					
+					servo.setAngle(servoOutput,angle);
 				}
-				*/
+				
 				break;
 
 			case 'S':
