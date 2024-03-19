@@ -44,7 +44,7 @@
 #define MODE1_RESTART 0x80 /**< Restart enabled */
 
 #define PCA9685_I2C_ADDRESS 0x40      /**< Default PCA9685 I2C Slave Address */
-#define FREQUENCY_OSCILLATOR 25000000 /**< Int. osc. frequency in datasheet */
+#define FREQUENCY_OSCILLATOR 26700000 /**< Int. osc. frequency in datasheet */
 #define I2C_BUS "/dev/i2c-5"
 
 #define PCA9685_PRESCALE_MIN 3   /**< minimum prescale value */
