@@ -180,7 +180,7 @@ int main(){
 		std::cout << "Enter 'F' if yout want to test the frequency output." << std::endl;
 		std::cout << "Enter 'A' if yout want to test the angle output." << std::endl;
 		std::cout << "Enter 'S' if yout want to stop testing." << std::endl;
-		std::scanf("%c",input);
+		std::scanf("%c",&input);
 
 		switch(input){
 			case 'F':
@@ -190,7 +190,7 @@ int main(){
 					std::cout << "The frequency value you entered is beyond the limit." << std::endl;
 					return 0;
 				}else{
-					setFreq(freq);
+					servo.setFreq(freq);
 				}
 
 				break;
