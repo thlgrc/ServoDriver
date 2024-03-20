@@ -78,7 +78,7 @@ void SysModel_PWMServoDriver::begin(){
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
-	angle = angle+7;	//calibrated based on servo horn's position (off by 7 degrees)
+	angle = angle+5;	//calibrated based on servo horn's position (off by 7 degrees)
 	float dutyCycle;
 	float freqMicro = ((float)1/_freq)*1000000; // microseconds
 	// printf("freqMicro: %f\n",freqMicro);    
