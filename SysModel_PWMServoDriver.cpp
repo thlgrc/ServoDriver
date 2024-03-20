@@ -63,7 +63,7 @@ void SysModel_PWMServoDriver::setFreq(float freq){
 	sleep();
 	writeReg(PCA9685_PRESCALE, prescale); // set the prescaler
 	wakeup();	
-	std::cout << "Prescale Value: 0x" << std::hex << (int)prescale << std::endl;
+	// std::cout << "Prescale Value: 0x" << std::hex << (int)prescale << std::endl;
 	_freq = freq;
     
 }
@@ -78,16 +78,16 @@ void SysModel_PWMServoDriver::begin(){
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
-    //float freq = 50; //change this so that freq is a private variable of servo
-    float dutyCycle;
-    float freqMicro = ((float)1/_freq)*1000000; // microseconds
-printf("freqMicro: %f\n",freqMicro);    
-float pulseLength;
-    int regValue;
-    long pulseMicro = map(angle,SERVO_ANGLE_MIN,SERVO_ANGLE_MAX,SERVO_PULSE_MIN,SERVO_PULSE_MAX); //in microseconds
-    dutyCycle = pulseMicro/freqMicro;
-    pulseLength = (dutyCycle * 4096) - 1;
-    regValue = (int)round(pulseLength);
+	//float freq = 50; //change this so that freq is a private variable of servo
+	float dutyCycle;
+	float freqMicro = ((float)1/_freq)*1000000; // microseconds
+	// printf("freqMicro: %f\n",freqMicro);    
+	float pulseLength;
+	int regValue;
+	long pulseMicro = map(angle,SERVO_ANGLE_MIN,SERVO_ANGLE_MAX,SERVO_PULSE_MIN,SERVO_PULSE_MAX); //in microseconds
+	dutyCycle = pulseMicro/freqMicro;
+	pulseLength = (dutyCycle * 4096) - 1;
+	regValue = (int)round(pulseLength);
 
 
     uint8_t buffer[4];
@@ -154,7 +154,7 @@ uint8_t SysModel_PWMServoDriver::readReg(uint8_t regNum){
         exit(1);
     }
  
-    printf("Data read from register %x: 0x%x\n",regNum, data);
+    // printf("Data read from register %x: 0x%x\n",regNum, data);
  
     close(file);
     
@@ -172,69 +172,88 @@ int main(){
 	servo.begin();
 	char input;
 	int flag = 1;
+	
 	int angle;
 	int freq;
 	int servoOutput;
 
 	while(flag){
-		std::cout << "Enter 'F' if yout want to test the frequency output." << std::endl;
-		std::cout << "Enter 'A' if yout want to test the angle output." << std::endl;
-		std::cout << "Enter 'S' if yout want to stop testing." << std::endl;
-		std::scanf("%c",&input);
+		int signal = 1;
+		std::cout << "---Enter 'F' if yout want to test the frequency output.\n" ;
+		std::cout << "---Enter 'A' if yout want to test the angle output.\n" ;
+		std::cout << "---Enter 'S' if yout want to stop testing.\n" ;
+		
+		std::scanf(" %c",&input);
 
 		switch(input){
 			case 'F':
-				std::cout << "Please enter a frequency from 50 to 330Hz" << std::endl;
-				std::scanf("%d",&freq);
-				if(freq < 50 || freq > 330){
-					std::cout << "The frequency value you entered is beyond the limit." << std::endl;
-					// return 0;
-					break;
-				}else{
-					servo.setFreq(freq);
+				std::cout << "---To observe the changes in frequency, the angle is set to 100 degrees at servo pin 0.\n" ;
+				servo.setAngle(0,100);
+				std::cout << "---Please make sure that you are measuring from the appropriate pin.\n\n" ;
+				while(signal){
+					std::cout << "->Please enter a frequency from 50 to 330Hz\n" ;
+					std::cout << "->If you want to return to the previous menu, enter '-1'.\n" ;
+					std::scanf("%d",&freq);
+					if(freq == -1){
+						signal = 0;
+						break;
+					}else if(freq < 50 || freq > 330){
+						std::cout << "Error: The frequency value you entered is beyond the limit.\n";
+						// return 0;
+						break;
+					}else{
+						servo.setFreq(freq);
+					}
+
 				}
 
 				break;
 
 			case 'A':
-				
-				std::cout << "Please enter which servo output pin [0 - 15] you want to test" << std::endl;
-				std::scanf("%d",&servoOutput);
-				
-				if(servoOutput < 0 || servoOutput > 15){
-					std::cout << "The pin number you entered is beyond the limit." << std::endl;
-					// return 0;
-					break;
+				std::cout << "---To observe the changes in angle across different output pins, the frequency is set to a deault value of 100Hz\n" ;
+				std::cout << "---Please make sure that you are measuring from the appropriate pin.\n\n" ;
+				servo.setFreq(100);
+				while(signal){
+					std::cout << "->Please enter which servo output pin [0 - 15] you want to test\n" ;
+					std::cout << "->If you want to return to the previous menu, enter '-1'.\n" ;
+					
+					std::scanf("%d",&servoOutput);
+					if(servoOutput == -1){
+						signal = 0;
+						break;
+					}else if(servoOutput < 0 || servoOutput > 15){
+						std::cout << "Error: The pin number you entered is beyond the limit.\n" ;
+						break;
+					}
+
+					while(signal){
+						std::cout << "->Please enter an angle from 0 to 180\n" ;
+						std::cout << "->If you want to return to the previous menu, enter '-1'.\n" ;
+						
+						std::scanf("%d",&angle);
+						if(angle == -1){
+							signal = 0;
+							break;
+						}else if(angle < 0 || angle > 180){
+							std::cout << "Error: The angle value you entered is beyond the limit.\n" ;
+							// return 0;
+							break;
+						}else{
+							servo.setAngle(servoOutput,angle);
+						}
+					}
 				}
-				std::cout << "Please enter an angle from 0 to 180" << std::endl;
-				std::scanf("%d",&angle);
-				if(angle < 0 || angle > 180){
-					std::cout << "The angle value you entered is beyond the limit." << std::endl;
-					// return 0;
-					break;
-				}else{
-					servo.setAngle(servoOutput,angle);
-				}
-				
 				break;
 
 			case 'S':
 				flag = 0;
 				break;
 			
+			default:
+				std::cout << "Error: You entered an invalid key. Please try again.\n" ;
+			
 
 		}
-			
-		/*
-		    std::cout << "Please enter an angle from 0 to 180" << std::endl;
-		    std::scanf("%d",&angle);
-		    servoB.setAngle(0,angle);
-			servo.setAngle(8,angle);
-		    servo.readReg(6);
-		    servo.readReg(7);
-		    servo.readReg(8);
-		    servo.readReg(9);
-		*/
 	
 	}
 	
