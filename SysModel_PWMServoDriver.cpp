@@ -79,6 +79,7 @@ void SysModel_PWMServoDriver::begin(){
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
 	//float freq = 50; //change this so that freq is a private variable of servo
+	angle = angle+7;	//calibrated based on servo horn's position (off by 7 degrees)
 	float dutyCycle;
 	float freqMicro = ((float)1/_freq)*1000000; // microseconds
 	// printf("freqMicro: %f\n",freqMicro);    
@@ -187,6 +188,7 @@ int main(){
 
 		switch(input){
 			case 'F':
+				signal = 1;
 				std::cout << "---To observe the changes in frequency, the angle is set to 100 degrees at servo pin 0.\n" ;
 				servo.setAngle(0,100);
 				std::cout << "---Please make sure that you are measuring from the appropriate pin.\n\n" ;
@@ -210,9 +212,10 @@ int main(){
 				break;
 
 			case 'A':
+				signal = 1;
 				std::cout << "---To observe the changes in angle across different output pins, the frequency is set to a deault value of 100Hz\n" ;
 				std::cout << "---Please make sure that you are measuring from the appropriate pin.\n\n" ;
-				servo.setFreq(100);
+				servo.setFreq(50);
 				while(signal){
 					std::cout << "->Please enter which servo output pin [0 - 15] you want to test\n" ;
 					std::cout << "->If you want to return to the previous menu, enter '-1'.\n" ;
@@ -232,7 +235,6 @@ int main(){
 						
 						std::scanf("%d",&angle);
 						if(angle == -1){
-							signal = 0;
 							break;
 						}else if(angle < 0 || angle > 180){
 							std::cout << "Error: The angle value you entered is beyond the limit.\n" ;
