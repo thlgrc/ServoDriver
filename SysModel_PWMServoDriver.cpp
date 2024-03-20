@@ -78,7 +78,6 @@ void SysModel_PWMServoDriver::begin(){
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
-	//float freq = 50; //change this so that freq is a private variable of servo
 	angle = angle+7;	//calibrated based on servo horn's position (off by 7 degrees)
 	float dutyCycle;
 	float freqMicro = ((float)1/_freq)*1000000; // microseconds
@@ -154,8 +153,6 @@ uint8_t SysModel_PWMServoDriver::readReg(uint8_t regNum){
         perror("Failed to read from the i2c bus");
         exit(1);
     }
- 
-    // printf("Data read from register %x: 0x%x\n",regNum, data);
  
     close(file);
     
