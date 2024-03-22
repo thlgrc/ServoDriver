@@ -80,26 +80,27 @@ void SysModel_PWMServoDriver::begin(){
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
-    float dutyCycle;
-    float freqMicro = ((float)1/_freq)*1000000; // microseconds
-    printf("freqMicro: %f\n",freqMicro);    
-    float pulseLength;
-    int regValue;
-    long pulseMicro = map(angle,SERVO_ANGLE_MIN,SERVO_ANGLE_MAX,SERVO_PULSE_MIN,SERVO_PULSE_MAX); //in microseconds
-    dutyCycle = pulseMicro/freqMicro;
-    pulseLength = (dutyCycle * 4096) - 1;
-    regValue = (int)round(pulseLength);
-
-
-    uint8_t buffer[4];
-    buffer[0] = PCA9685_LED0_OFF_L + 4 * servoNum;
-    buffer[1] = regValue & 0xFF; // to get the 8LSB
-    buffer[2] = PCA9685_LED0_OFF_H + 4 * servoNum;
-    buffer[3] = regValue >> 8; // to get the 4 MSB
-
-    _servonum = servoNum;
-    writeReg(buffer[0],buffer[1]);
-    writeReg(buffer[2],buffer[3]);
+	angle = angle+7; //calibrating the servo (should be done manually)
+	float dutyCycle;
+	float freqMicro = ((float)1/_freq)*1000000; // microseconds
+	printf("freqMicro: %f\n",freqMicro);    
+	float pulseLength;
+	int regValue;
+	long pulseMicro = map(angle,SERVO_ANGLE_MIN,SERVO_ANGLE_MAX,SERVO_PULSE_MIN,SERVO_PULSE_MAX); //in microseconds
+	dutyCycle = pulseMicro/freqMicro;
+	pulseLength = (dutyCycle * 4096) - 1;
+	regValue = (int)round(pulseLength);
+	
+	
+	uint8_t buffer[4];
+	buffer[0] = PCA9685_LED0_OFF_L + 4 * servoNum;
+	buffer[1] = regValue & 0xFF; // to get the 8LSB
+	buffer[2] = PCA9685_LED0_OFF_H + 4 * servoNum;
+	buffer[3] = regValue >> 8; // to get the 4 MSB
+	
+	_servonum = servoNum;
+	writeReg(buffer[0],buffer[1]);
+	writeReg(buffer[2],buffer[3]);
 
 
 }
