@@ -83,7 +83,7 @@ void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
 	angle = angle+7; //calibrating the servo (should be done manually)
 	float dutyCycle;
 	float freqMicro = ((float)1/_freq)*1000000; // microseconds
-	printf("freqMicro: %f\n",freqMicro);    
+	//printf("freqMicro: %f\n",freqMicro);    
 	float pulseLength;
 	int regValue;
 	long pulseMicro = map(angle,SERVO_ANGLE_MIN,SERVO_ANGLE_MAX,SERVO_PULSE_MIN,SERVO_PULSE_MAX); //in microseconds
