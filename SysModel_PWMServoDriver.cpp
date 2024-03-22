@@ -12,21 +12,23 @@
 #include <math.h>
 
 
-#define MODE1_AI 0x20 
 SysModel_PWMServoDriver::SysModel_PWMServoDriver()
-    : _i2caddr(PCA9685_I2C_ADDRESS) {}
+    : _i2caddr(PCA9685_I2C_ADDRESS) {
+
+	    begin();
+	    setFreq(50); // default frequency
+    }
    
 
 void delay(int milliseconds)
 {
     // Converting time into milli_seconds
-    // int milli_seconds = 1000000 * number_of_seconds;
     int milli_seconds = 1000 * milliseconds;
 
     // Storing start time
     clock_t start_time = clock();
 
-    // looping till required time is not achieved
+    // looping until required time is not achieved
     while (clock() < start_time + milli_seconds);
 }
 
@@ -34,7 +36,6 @@ void SysModel_PWMServoDriver::sleep() {
     uint8_t awake = readReg(PCA9685_MODE1);
     uint8_t sleep = awake | MODE1_SLEEP; // set sleep bit high
     writeReg(PCA9685_MODE1, sleep);
-    // delay(5); // wait until cycle ends for sleep to be active
 }
 
 void SysModel_PWMServoDriver::wakeup() {
@@ -58,22 +59,13 @@ void SysModel_PWMServoDriver::setFreq(float freq){
     if (prescaleval > PCA9685_PRESCALE_MAX){
     prescaleval = PCA9685_PRESCALE_MAX;
     }
+    /*Update the prescale register*/
     uint8_t prescale = (uint8_t)prescaleval;
 	sleep();
-    /*
-    uint8_t oldmode = readReg(PCA9685_MODE1);
-std::cout << "oldmode: 0x" << std::hex << (int)oldmode << std::endl;
-    uint8_t newmode = (oldmode & ~MODE1_RESTART) | MODE1_SLEEP; // sleep
-std::cout << "newmode: 0x" << std::hex << (int)newmode << std::endl;
-    writeReg(PCA9685_MODE1, newmode);                             // go to sleep
-    writeReg(PCA9685_MODE1, oldmode);
-    delay(5);
-    */
-     writeReg(PCA9685_PRESCALE, prescale); // set the prescaler
-wakeup();
-    // This sets the MODE1 register to turn on auto increment.
-//     writeReg(PCA9685_MODE1, oldmode | MODE1_RESTART |MODE1_AI);
-    std::cout << "Prescale Value: 0x" << std::hex << (int)prescale << std::endl;
+    writeReg(PCA9685_PRESCALE, prescale); // set the prescaler
+    wakeup();
+
+   // std::cout << "Prescale Value: 0x" << std::hex << (int)prescale << std::endl;
     _freq = freq;
     
 }
@@ -84,17 +76,14 @@ void SysModel_PWMServoDriver::begin(){
     writeReg(PCA9685_ALLLED_ON_H,0);
     writeReg(PCA9685_ALLLED_OFF_L,0);
     writeReg(PCA9685_ALLLED_OFF_H,0);
-    
-    //set frequency to 50
-//    setFreq(50);
+
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
-    //float freq = 50; //change this so that freq is a private variable of servo
     float dutyCycle;
     float freqMicro = ((float)1/_freq)*1000000; // microseconds
-printf("freqMicro: %f\n",freqMicro);    
-float pulseLength;
+    printf("freqMicro: %f\n",freqMicro);    
+    float pulseLength;
     int regValue;
     long pulseMicro = map(angle,SERVO_ANGLE_MIN,SERVO_ANGLE_MAX,SERVO_PULSE_MIN,SERVO_PULSE_MAX); //in microseconds
     dutyCycle = pulseMicro/freqMicro;
@@ -108,10 +97,13 @@ float pulseLength;
     buffer[2] = PCA9685_LED0_OFF_H + 4 * servoNum;
     buffer[3] = regValue >> 8; // to get the 4 MSB
 
+    _servonum = servoNum;
     writeReg(buffer[0],buffer[1]);
     writeReg(buffer[2],buffer[3]);
 
+
 }
+
 /*Read/Write to Registers*/
 
 void SysModel_PWMServoDriver::writeReg(uint8_t regNum,uint8_t value){
@@ -166,7 +158,7 @@ uint8_t SysModel_PWMServoDriver::readReg(uint8_t regNum){
         exit(1);
     }
  
-    printf("Data read from register %x: 0x%x\n",regNum, data);
+    //printf("Data read from register %x: 0x%x\n",regNum, data);
  
     close(file);
     
@@ -178,44 +170,32 @@ long SysModel_PWMServoDriver::map(long x, long in_min, long in_max, long out_min
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-
+/*
 int main(){
     SysModel_PWMServoDriver servo;
     servo.begin();
-	servo.setFreq(200);
-   SysModel_PWMServoDriver servoB;
-  servoB.begin();
-  servoB.setFreq(200);
-/*
-servo.setAngle(0,45);
+    servo.setFreq(200);
+    SysModel_PWMServoDriver servoB;
+    servoB.begin();
+    servoB.setFreq(200);
 
-    servo.readReg(6);
-    delay(500);
-    servo.readReg(7);
-    delay(500);
-    servo.readReg(8);
-   delay(500);
-    servo.readReg(9);
-
-
-*/
-
-char input;
+    char input;
     int angle;
 
     while(1){
 
-            std::cout << "Please enter an angle from 0 to 180" << std::endl;
-            std::scanf("%d",&angle);
-            servoB.setAngle(0,angle);
-		servo.setAngle(8,angle);
-            servo.readReg(6);
-            servo.readReg(7);
-            servo.readReg(8);
-            servo.readReg(9);
+        std::cout << "Please enter an angle from 0 to 180" << std::endl;
+        std::scanf("%d",&angle);
+        servoB.setAngle(0,angle);
+        servo.setAngle(8,angle);
+        servo.readReg(6);
+        servo.readReg(7);
+        servo.readReg(8);
+        servo.readReg(9);
 
 
     }
 
     return 0;
 }
+*/
