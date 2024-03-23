@@ -50,7 +50,7 @@
 #define PCA9685_PRESCALE_MIN 3   /**< minimum prescale value */
 #define PCA9685_PRESCALE_MAX 255 /**< maximum prescale value */
 
-#define SERVO_ANGLE_MAX 180 /*degrees*/
+#define SERVO_ANGLE_MAX 270 /*degrees*/
 #define SERVO_ANGLE_MIN 0 /*degrees*/
 #define SERVO_PULSE_MAX 2500 /*microseconds*/
 #define SERVO_PULSE_MIN 500 /*microseconds*/
