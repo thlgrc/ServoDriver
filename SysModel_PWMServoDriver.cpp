@@ -78,7 +78,6 @@ void SysModel_PWMServoDriver::begin(){
 }
 
 void SysModel_PWMServoDriver::setAngle(int servoNum, int angle){
-	angle = angle+5;	//calibrated based on servo horn's position (off by 7 degrees)
 	float dutyCycle;
 	float freqMicro = ((float)1/_freq)*1000000; // microseconds
 	// printf("freqMicro: %f\n",freqMicro);    
@@ -210,7 +209,7 @@ int main(){
 
 			case 'A':
 				signal = 1;
-				std::cout << "---To observe the changes in angle across different output pins, the frequency is set to a deault value of 100Hz\n" ;
+				std::cout << "---To observe the changes in angle across different output pins, the frequency is set to a deault value of 50Hz\n" ;
 				std::cout << "---Please make sure that you are measuring from the appropriate pin.\n\n" ;
 				servo.setFreq(50);
 				while(signal){
