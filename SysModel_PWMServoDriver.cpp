@@ -170,32 +170,41 @@ long SysModel_PWMServoDriver::map(long x, long in_min, long in_max, long out_min
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-/*
+
 int main(){
     SysModel_PWMServoDriver servo;
     servo.begin();
-    servo.setFreq(200);
-    SysModel_PWMServoDriver servoB;
-    servoB.begin();
-    servoB.setFreq(200);
+    int count = 0;
 
-    char input;
-    int angle;
+    double averageSetAngle;
+    double setAngleSum = 0;
 
-    while(1){
+    double limit = 1000.0;
+    while(count <= (int) limit){
+    
+        auto start_time = std::chrono::high_resolution_clock::now();
+        servo.setAngle(0,155);
+        auto end_time = std::chrono::high_resolution_clock::now(); 
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        setAngleSum += duration.count();    
 
-        std::cout << "Please enter an angle from 0 to 180" << std::endl;
-        std::scanf("%d",&angle);
-        servoB.setAngle(0,angle);
-        servo.setAngle(8,angle);
-        servo.readReg(6);
-        servo.readReg(7);
-        servo.readReg(8);
-        servo.readReg(9);
-
+        count++;
 
     }
 
+    averageSetAngle = setAngleSum/limit;
+    std::cout << "_________________________________________________________________" << std::endl;
+
+    std::cout << "Mean fastGeneralWrite() Execution time: " << setAngleSum << " microseconds" << std::endl;
+
+    std::cout << "_________________________________________________________________" << std::endl;
+
+    std::cout << "Test iterations: " << limit <<  std::endl;
+
+    return EXIT_SUCCESS;
+
+    
+
     return 0;
 }
-*/
+
