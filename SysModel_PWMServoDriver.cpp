@@ -177,35 +177,126 @@ int main(){
     servo.begin();
     int count = 0;
 
-    double averageSetAngle;
-    double setAngleSum = 0;
+	double averageSleep = 0;
+	double sleepSum = 0;
+	
+	double averageWakep = 0;
+	double wakeupSum = 0;
+	
+	double averageSetFreq = 0;
+	double setFreqSum = 0;
+	
+	double averageBegin = 0;
+	double beginSum = 0;
+	
+	double averageSetAngle = 0;
+	double setAngleSum = 0;
+	
+	double averageWriteReg = 0;
+	double writeRegSum = 0;
+	
+	double averageReadReg = 0;
+	double readRegSum = 0;
+	
+	double averageMap = 0;
+	double mapSum = 0;
 
-    double limit = 1000.0;
-    while(count <= (int) limit){
-    
-        auto start_time = std::chrono::high_resolution_clock::now();
-        servo.setAngle(0,155);
-        auto end_time = std::chrono::high_resolution_clock::now(); 
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-        setAngleSum += duration.count();    
+	double limit = 1000.0;
+	while(count <= (int) limit){
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.sleep(); //uses writeReg, readReg
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		sleepSum += duration.count();  
+		
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.wakeup(); //uses writeReg, readReg 
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		wakeupSum += duration.count();  
+		
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.setFreq(50); //uses sleep, writeReg, wakeup
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		setFreqSum += duration.count();  
+		
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.begin(); //uses writeReg
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		beginSum += duration.count();   
+		
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.setAngle(0,155); //uses writeReg, map
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		setAngleSum += duration.count();  
+		
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.writeReg(8,66); //uses linux filesystem
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		writeRegSum += duration.count();  
+		
+		auto start_time = std::chrono::high_resolution_clock::now();
+		servo.readReg(8);
+		auto end_time = std::chrono::high_resolution_clock::now(); 
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+		readRegSum += duration.count();  
+		
+		
+		
+		count++;
+	
+	}
+	averageSleep = sleepSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean sleep() Execution time: " << averageSleep << " microseconds" << std::endl;
 
-        count++;
+	
+	averageWakeup= wakeupSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean wakeup() Execution time: " << averageWakeup << " microseconds" << std::endl;
 
-    }
+	
+	averageSetFreq= setFreqSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean setFreq() Execution time: " << averageSetFreq << " microseconds" << std::endl;
 
-    averageSetAngle = setAngleSum/limit;
-    std::cout << "_________________________________________________________________" << std::endl;
+	
+	averageBegin = beginSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean begin() Execution time: " << averageBegin << " microseconds" << std::endl;
 
-    std::cout << "Mean fastGeneralWrite() Execution time: " << setAngleSum << " microseconds" << std::endl;
+	
+	averageSetAngle = setAngleSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean setAngle() Execution time: " << setAngleSum << " microseconds" << std::endl;
 
-    std::cout << "_________________________________________________________________" << std::endl;
+	
+	averageWriteReg = writeRegSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean writeReg() Execution time: " << averageWriteReg << " microseconds" << std::endl;
 
-    std::cout << "Test iterations: " << limit <<  std::endl;
+	
+	averageReadReg = writeRegSum/limit;
+	std::cout << "_________________________________________________________________" << std::endl;
+	
+	std::cout << "Mean readReg() Execution time: " << averageReadReg << " microseconds" << std::endl;
 
-    return EXIT_SUCCESS;
+	
+	std::cout << "Test iterations: " << limit <<  std::endl;
 
-    
-
-    return 0;
+	
+	return EXIT_SUCCESS;
+	
+	return 0;
 }
 
