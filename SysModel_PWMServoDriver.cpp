@@ -276,7 +276,7 @@ int main(){
 	averageSetAngle = setAngleSum/limit;
 	std::cout << "_________________________________________________________________" << std::endl;
 	
-	std::cout << "Mean setAngle() Execution time: " << setAngleSum << " microseconds" << std::endl;
+	std::cout << "Mean setAngle() Execution time: " << averageSetAngle << " microseconds" << std::endl;
 	
 	
 	averageWriteReg = writeRegSum/limit;
