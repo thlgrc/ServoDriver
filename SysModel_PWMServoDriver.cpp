@@ -180,7 +180,7 @@ int main(){
 	double averageSleep = 0;
 	double sleepSum = 0;
 	
-	double averageWakep = 0;
+	double averageWakeup = 0;
 	double wakeupSum = 0;
 	
 	double averageSetFreq = 0;
