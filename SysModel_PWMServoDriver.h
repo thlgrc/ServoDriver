@@ -68,15 +68,16 @@ public:
     void begin();
     void setAngle(int servoNum, int angle);
     void wakeup();
-// Move these to private and test
-    void writeReg(uint8_t addr,uint8_t value);
-    uint8_t readReg(uint8_t addr);
+    /*Move these to private and test*/
+    // void writeReg(uint8_t addr,uint8_t value);
+    // uint8_t readReg(uint8_t addr);
 
 private:
     uint8_t _i2caddr;
     uint32_t _oscillator_freq;
     uint8_t _freq;
-    // void writeReg(uint8_t addr,uint8_t value);
-    // uint8_t readReg(uint8_t addr);
+    int _servonum;
+    void writeReg(uint8_t addr,uint8_t value);
+    uint8_t readReg(uint8_t addr);
     long map(long x, long in_min, long in_max, long out_min, long out_max); 
 };
